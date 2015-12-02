@@ -16,11 +16,6 @@ import java.util.Map;
 
 public class DefaultController extends Controller {
 
-    public String index(Request request, Response response) {
-        return "Hello, bro!";
-    }
-
-
     public Map<String, Object> time(Request request, Response response) {
         Map<String, Object> result = new HashMap<>();
 

@@ -16,7 +16,7 @@ public class Configuration extends com.moneytapp.restapi.infrastructure.spark.Co
     protected Configuration setRoutes() {
         super.setRoutes();
 
-        addRoute(new Route("/", SupportedHttpMethods.GET, "DefaultController:index",
+        addRoute(new Route("/", SupportedHttpMethods.GET, "DefaultController:time",
                 getAcceptableContentType()));
 
         // User routes
