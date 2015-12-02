@@ -6,13 +6,14 @@
 package com.moneytapp.restapi;
 
 
-import com.moneytapp.restapi.app.infrastructure.SparkBootstrap;
-import com.moneytapp.restapi.app.infrastructure.SparkConfiguration;
+import com.moneytapp.restapi.infrastructure.spark.Bootstrap;
+import com.moneytapp.restapi.infrastructure.spark.ConfigurationFactory;
+import com.moneytapp.restapi.infrastructure.spark.Environments;
 
 
 public class Main {
 
     public static void main(String[] args) {
-        new SparkBootstrap(new SparkConfiguration()).run();
+        new Bootstrap(ConfigurationFactory.getConfiguration(Environments.DEVELOPMENT)).run();
     }
 }
