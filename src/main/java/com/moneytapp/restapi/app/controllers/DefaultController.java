@@ -9,7 +9,6 @@ package com.moneytapp.restapi.app.controllers;
 import com.moneytapp.restapi.infrastructure.spark.Controller;
 import spark.Request;
 import spark.Response;
-
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
