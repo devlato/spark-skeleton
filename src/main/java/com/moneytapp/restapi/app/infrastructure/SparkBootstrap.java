@@ -19,7 +19,7 @@ import java.lang.reflect.Method;
 
 public class SparkBootstrap extends Bootstrap {
 
-    public static final int STATUS_CONTROLLER_METHOD_EXECUTION_ERROR = -1;
+    public static final int STATUS_CONTROLLER_METHOD_EXECUTION_ERROR = 500;
 
     public static final String STATUS_CONTROLLER_METHOD_INVOCATION_DESCRIPTION =
             "Required \"%s\" controller method not found";
@@ -71,30 +71,82 @@ public class SparkBootstrap extends Bootstrap {
     private SparkBootstrap addRoute(SparkRoute route) {
         switch (route.getMethod()) {
             case GET:
-                Spark.get(route.getRoute(), getHandler(route.getHandler()));
+                Spark.get(route.getRoute(), route.getAcceptableContentType(),
+                        getHandler(route.getHandler()));
                 break;
             case POST:
-                Spark.post(route.getRoute(), getHandler(route.getHandler()));
+                Spark.post(route.getRoute(), route.getAcceptableContentType(),
+                        getHandler(route.getHandler()));
                 break;
             case PUT:
-                Spark.put(route.getRoute(), getHandler(route.getHandler()));
+                Spark.put(route.getRoute(), route.getAcceptableContentType(),
+                        getHandler(route.getHandler()));
                 break;
             case HEAD:
-                Spark.head(route.getRoute(), getHandler(route.getHandler()));
+                Spark.head(route.getRoute(), route.getAcceptableContentType(),
+                        getHandler(route.getHandler()));
                 break;
             case DELETE:
-                Spark.delete(route.getRoute(), getHandler(route.getHandler()));
+                Spark.delete(route.getRoute(), route.getAcceptableContentType(),
+                        getHandler(route.getHandler()));
                 break;
             case CONNECT:
-                Spark.connect(route.getRoute(), getHandler(route.getHandler()));
+                Spark.connect(route.getRoute(), route.getAcceptableContentType(),
+                        getHandler(route.getHandler()));
                 break;
             case PATCH:
-                Spark.patch(route.getRoute(), getHandler(route.getHandler()));
+                Spark.patch(route.getRoute(), route.getAcceptableContentType(),
+                        getHandler(route.getHandler()));
                 break;
             case TRACE:
-                Spark.trace(route.getRoute(), getHandler(route.getHandler()));
+                Spark.trace(route.getRoute(), route.getAcceptableContentType(),
+                        getHandler(route.getHandler()));
                 break;
         }
+        applyRouteFilters(route);
+
+        return this;
+    }
+
+
+    private SparkBootstrap applyRouteFilters(SparkRoute route) {
+        applyBeforeRouteFilters(route);
+        applyAfterRouteFilters(route);
+
+        return this;
+    }
+
+
+    private SparkBootstrap applyBeforeRouteFilters(SparkRoute route) {
+        route
+                .getBeforeFilters()
+                .forEach(
+                        (filter) -> Spark.before(route.getRoute(),
+                                route.getAcceptableContentType(), filter));
+
+        getConfiguration()
+                .getGlobalBeforeFilters()
+                .forEach(
+                        (filter) -> Spark.before(route.getRoute(),
+                                route.getAcceptableContentType(), filter));
+
+        return this;
+    }
+
+
+    private SparkBootstrap applyAfterRouteFilters(SparkRoute route) {
+        route
+                .getAfterFilters()
+                .forEach(
+                        (filter) -> Spark.before(route.getRoute(),
+                                route.getAcceptableContentType(), filter));
+
+        getConfiguration()
+                .getGlobalAfterFilters()
+                .forEach(
+                        (filter) -> Spark.before(route.getRoute(),
+                                route.getAcceptableContentType(), filter));
+
         return this;
     }
 
@@ -139,5 +191,6 @@ public class SparkBootstrap extends Bootstrap {
 
     public void exit(int status, String message) {
         Spark.halt(status, message);
+        Spark.stop();
     }
 }
